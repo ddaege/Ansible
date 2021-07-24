@@ -1,0 +1,39 @@
+---
+- name: Running a webserver
+  hosts: servers
+  become: yes
+  tasks:
+
+  - name: Installing epel-release
+    yum:
+      name: epel-release
+      state: present
+ 
+  - name: Installing nginx
+    yum:
+      name: nginx
+      state: present
+
+  - name: Insert index page
+    lineinfile:
+      path: /var/www/html/index.html
+      line: "Hello World"
+      create: yes
+
+  - name: Opening port "80"
+    firewalld:
+      port: 80/tcp
+      state: enabled
+
+  - name: Enabling selinux
+    selinux:
+      state: disabled
+
+  - name: Starting nginx
+    service:
+      name: nginx
+      state: started
+
+  - name: Creating user
+    user:
+     name: AnsibleSlave 
